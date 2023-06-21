@@ -33,3 +33,9 @@ RSA digital signature hash function shall be SHA512. The digital signature shall
 12. Send message from client to server with MiniAES(client_write_key) and HMAC(client_write_mac_key). Decrypt the message and verify the authentication code.
 
 13. Send message from server to client with MiniAES(server_write_key) and HMAC(server_write_mac_key). Decrypt the message and verify the authentication code.
+----
+
+## Credits
+Authors: `Alfredo Martins` && `Chen Siyu` <br>
+Professor: `Ádám Zlehovszky Dr.` <br>
+Place and date: `Budapest, June 2023` <br>

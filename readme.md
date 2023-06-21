@@ -1,5 +1,5 @@
 # Secure Communication Protocol Implementation using RSA and Symmetric Encryption
-===
+---
 # General information
 
 Messages shall be sent on Teams chat in hexadecimal string encoding.

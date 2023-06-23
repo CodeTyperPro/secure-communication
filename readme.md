@@ -36,6 +36,6 @@ RSA digital signature hash function shall be SHA512. The digital signature shall
 ----
 
 ## Credits
-Authors: `Alfredo Martins` && `Chen Siyu` <br>
+Authors: `Alfredo Martins` & `Chen Siyu` <br>
 Professor: `Ádám Zlehovszky Dr.` <br>
 Place and date: `Budapest, June 2023` <br>

@@ -2,37 +2,44 @@
 ---
 # General information
 
-Messages shall be sent on Teams chat in hexadecimal string encoding.
-True random bytes can be created with secrets.token_bytes().
-RSA size shall be 2048 bits, MGF hash function for RSA-OAEP shall be SHA1. HMAC hash function shall be SHA256.
-RSA digital signature hash function shall be SHA512. The digital signature shall fit into RSA-OAEP-2048 payload together with the random bytes, see 6-7-8.
+This project focuses on implementing a secure communication protocol for Teams chat. The protocol utilizes RSA encryption with a key size of 2048 bits, SHA1 for MGF hash function in RSA-OAEP, and SHA256 for HMAC hash function. RSA digital signatures employ SHA512. The protocol involves key generation, random byte generation, signature verification, master secret generation, and encryption/decryption using MiniAES and HMAC. The goal is to ensure secure and authenticated communication between client and server.
+
+To communicate securely on Teams chat, we'll use hexadecimal string encoding for our messages. To generate true random bytes, you can use the `secrets.token_bytes()` function. We'll be using RSA encryption with a key size of 2048 bits. The MGF hash function for RSA-OAEP will be SHA1, and the HMAC hash function will be SHA256. For RSA digital signatures, we'll use the SHA512 hash function. The digital signature will fit into the RSA-OAEP-2048 payload along with the random bytes.
 
 # Steps to perform
 
-1. Form groups of two students and agree on roles, i.e. who is the client and who is the server server.
-2. Generate RSA keys on both sides (client_rsa_enc_key, server_rsa_enc_key) for encryption and (client_rsa_sign_key, server_rsa_sign_key) for signature
-3. Generate 32 random bytes on both sides (client_public_random, server_public_random)
-4. Send client_rsa_enc_key.public, client_rsa_sign_key.public and client_public_random from client to server
-5. Send server_rsa_enc_key.public, server_rsa_sign_key.public and server_public_random from server to client
-6. Generate 48 private random bytes on both sides (client_private_random, server_private_random)
-   
-7. Sign client_private_random with RSA and send it from client to server with RSA-OAEP. Decrypt the received message on server side and verify the signature.
-   
-8. Sign server_private_random with RSA and send it from server to client with RSA-OAEP. Decrypt the received message on client side and verify the signature.
-   
-9.  Combine private randoms into premaster_secret = client_private_random + server_private_random, where +  is concatenation of bytes.
-    
-10. Generate master secret with PRF(premaster_secret, "master secret", client_public_random + server_public_random). The length of the master secret shall be 48 bytes.
-    
-11. Both sites generate the following keys with PRF(master_secret, "key expansion", client_public_random + server_public_random)
-    - client_write_mac_key: 32 bytes
-    - server_write_mac_key: 32 bytes
-    - client_write_key: 2 bytes
-    - server_write_key: 2 bytes
-  
-12. Send message from client to server with MiniAES(client_write_key) and HMAC(client_write_mac_key). Decrypt the message and verify the authentication code.
+Here are the steps to follow:
 
-13. Send message from server to client with MiniAES(server_write_key) and HMAC(server_write_mac_key). Decrypt the message and verify the authentication code.
+1. Form groups of two students and decide who will be the client and who will be the server.
+
+2. Generate RSA key pairs for both sides: `client_rsa_enc_key` and `server_rsa_enc_key` for encryption, and `client_rsa_sign_key` and `server_rsa_sign_key` for signature.
+
+3. Generate 32 random bytes for each side: `client_public_random` and `server_public_random`.
+
+4. The client should send the following to the server: `client_rsa_enc_key.public`, `client_rsa_sign_key.public`, and `client_public_random`.
+
+5. The server should send the following to the client: `server_rsa_enc_key.public`, `server_rsa_sign_key.public`, and `server_public_random`.
+
+6. Generate 48 private random bytes for each side: `client_private_random` and `server_private_random`.
+
+7. The client signs `client_private_random` with RSA and sends it to the server using RSA-OAEP. The server decrypts the received message and verifies the signature.
+
+8. The server signs `server_private_random` with RSA and sends it to the client using RSA-OAEP. The client decrypts the received message and verifies the signature.
+
+9. Concatenate the private random bytes to form the `premaster_secret = client_private_random + server_private_random`.
+
+10. Generate the master secret using `PRF(premaster_secret, "master secret", client_public_random + server_public_random)`. The master secret should be 48 bytes long.
+
+11. Both the client and the server generate the following keys using `PRF(master_secret, "key expansion", client_public_random + server_public_random)`:
+    - `client_write_mac_key`: 32 bytes
+    - `server_write_mac_key`: 32 bytes
+    - `client_write_key`: 2 bytes
+    - `server_write_key`: 2 bytes
+
+12. The client sends a message to the server using MiniAES encryption with `client_write_key` and HMAC with `client_write_mac_key`. The server decrypts the message and verifies the authentication code.
+
+13. The server sends a message to the client using MiniAES encryption with `server_write_key` and HMAC with `server_write_mac_key`. The client decrypts the message and verifies the authentication code.
+
 ----
 
 ## Credits
